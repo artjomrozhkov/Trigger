@@ -2,7 +2,7 @@
 require_once ('connect.php');
 global $yhendus;
 //andmete lisamine tabelisse
-if(isset($_REQUEST['LisamisVorm']) && !empty($_REQUEST['nimi'])){
+if(isset($_REQUEST['lisamisvorm']) && !empty($_REQUEST['nimi'])){
     $paring=$yhendus->prepare('INSERT INTO loomadevarjupaik(nimi,vanus,lemmikToit) Values(?,?,?)');
     $paring->bind_param('sis',$_REQUEST['nimi'],$_REQUEST['vanus'],$_REQUEST['lemmiktoit']);
     $paring->execute();
@@ -10,14 +10,14 @@ if(isset($_REQUEST['LisamisVorm']) && !empty($_REQUEST['nimi'])){
 
 
 //kustutamine
-if(isset($_REQUEST['kustuta'])) {
+if(isset($_REQUEST['kustutusid'])) {
     $paring = $yhendus->prepare('DELETE FROM loomadevarjupaik WHERE loomaID=?');
-    $paring->bind_param('i', $_REQUEST['kustuta']);
+    $paring->bind_param('i', $_REQUEST['kustutusid']);
     $paring->execute();
 }
 
-$paring=$yhendus->prepare('SELECT loomaID, nimi,vanus,lemmikToit,linnID	 FROM loomadevarjupaik');
-$paring->bind_result($loomaID, $nimi, $vanus,$lemmikToit,$linnID);
+$paring=$yhendus->prepare('SELECT loomaID, nimi,vanus,lemmikToit FROM loomadevarjupaik');
+$paring->bind_result($loomaID, $nimi, $vanus,$lemmikToit);
 $paring->execute();
 ?>
 
@@ -36,7 +36,7 @@ $paring->execute();
         <th>Nimi</th>
         <th>Vanus</th>
         <th>Lemmiktoit</th>
-        <th>Linn</th>
+        <th>Kustuta</th>
     </tr>
     <?php
     while($paring->fetch()){
@@ -45,15 +45,15 @@ $paring->execute();
         echo "<td>". htmlspecialchars($nimi)."</td>";
         echo "<td>". htmlspecialchars($vanus)."</td>";
         echo "<td>". htmlspecialchars($lemmikToit)."</td>";
-        echo "<td>". htmlspecialchars($linnID)."</td>";
-        echo "<td><a href='?kustuta=$loomaID'>Kustuta</a></td>";
+
+        echo "<td><a href='$_SERVER[PHP_SELF]?kustutusid=$loomaID'>kustuta</a></td>";
         echo "</tr>";
     }
     ?>
 </table>
 <h2>Uue looma lisamine</h2>
 <form name="uusloom" method="post" action="?">
-    <input type="hidden" name="LisamisVorm">
+    <input type="hidden" name="lisamisvorm">
     <input type="text" name="nimi" placeholder="Looma nimi">
     <br>
     <br>
